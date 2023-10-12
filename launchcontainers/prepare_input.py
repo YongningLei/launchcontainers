@@ -50,6 +50,7 @@ def prepare_analysis_folder(parser_namespace, lc_config):
     entities= os.listdir(container_folder)
     if len(entities)==0:
         logger.critical('No valid analysis folder, prepare mode is incomplete, please rerun prepare mode and create correct analysis folder')
+        print(container_folder)
         raise FileNotFoundError('the analysis folder is not found, aborting')
     analysis_folders= [dir_ana for dir_ana in entities if os.path.isdir(os.path.join(container_folder,dir_ana))]
     
@@ -177,7 +178,7 @@ def prepare_analysis_folder(parser_namespace, lc_config):
         if container  not in ['rtp-pipeline', 'fmriprep']:    
             path_to_analysis_container_specific_config = [os.path.join(Dir_analysis, f"{config_name}.json")]
         if container == 'rtp-pipeline':
-            path_to_analysis_container_specific_config = [os.path.join(Dir_analysis, f"{config_name}",+".json"), os.path.join(Dir_analysis, "tractparams.csv")]
+            path_to_analysis_container_specific_config = [os.path.join(Dir_analysis, f"{config_name}.json"), os.path.join(Dir_analysis, "tractparams.csv")]
         if container == 'fmriprep':
             path_to_analysis_container_specific_config=[]
         
@@ -194,7 +195,7 @@ def prepare_analysis_folder(parser_namespace, lc_config):
     return Dir_analysis, Dict_configs_under_analysisfolder
 
 # %% prepare_input_files
-def prepare_dwi_input(parser_namespace, Dir_analysis, lc_config, df_subSes):
+def prepare_dwi_input(parser_namespace, Dir_analysis, lc_config, df_subSes, run_lc):
     """
 
     Parameters
@@ -263,12 +264,12 @@ def prepare_dwi_input(parser_namespace, Dir_analysis, lc_config, df_subSes):
                 csl.rtppreproc(parser_namespace, Dir_analysis, lc_config, sub, ses)
             elif "rtp-pipeline" in container:
                 
-                if not len(parser_namespace.container_specific_config_path) == 2:
+                if not len(parser_namespace.container_specific_config) == 2:
                     logger.error("\n"
                               +f"Input file error: the RTP-PIPELINE config is not provided completely")
                     raise FileNotFoundError('The RTP-PIPELINE needs the config.json and tratparams.csv as container specific configs')
                 
-                csl.rtppipeline(parser_namespace, Dir_analysis,lc_config, sub, ses)
+                csl.rtppipeline(parser_namespace, Dir_analysis,lc_config, sub, ses, run_lc)
             elif "anatrois" in container:
                 csl.anatrois(parser_namespace, Dir_analysis,lc_config,sub, ses)
             

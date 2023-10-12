@@ -20,6 +20,8 @@ def generate_cmd(new_lc_config,sub,ses,Dir_analysis, path_to_analysis_config_jso
     host = new_lc_config['general']['host']
     sif_path=  new_lc_config['general']['sif_path']  
     
+    containersif = os.path.join(sif_path,container+'_'+new_lc_config['container_specific'][container]['version']+'.sif')
+
     jobqueue_config= new_lc_config['host_options'][host]
 
     envcmd= f"module load {jobqueue_config['sin_ver']} "\
@@ -47,14 +49,15 @@ def generate_cmd(new_lc_config,sub,ses,Dir_analysis, path_to_analysis_config_jso
                 f"--bind {path_to_analysis_config_json}:/flywheel/v0/config.json "\
                 f"{sif_path} 2>> {logfilename}.e 1>> {logfilename}.o "
         if ("local" == host):
-            cmd=envcmd+f"singularity run -e --no-home "\
+            path_to_config_json = path_to_analysis_config_json[0]
+            cmd=f"singularity run -e --no-home "\
                 f"--bind /bcbl:/bcbl "\
                 f"--bind /tmp:/tmp "\
                 f"--bind /export:/export "\
                 f"--bind {path_to_sub_derivatives}/input:/flywheel/v0/input:ro "\
                 f"--bind {path_to_sub_derivatives}/output:/flywheel/v0/output "\
-                f"--bind {path_to_analysis_config_json}:/flywheel/v0/config.json "\
-                f"{sif_path} 2>> {logfilename}.e 1>> {logfilename}.o "
+                f"--bind {path_to_config_json}:/flywheel/v0/config.json "\
+                f"{containersif} 2>> {logfilename}.e 1>> {logfilename}.o "
         
         elif "DIPC" == host:
             cmd=f"singularity run --no-home "\
@@ -234,7 +237,7 @@ def launchcontainer(Dir_analysis, new_lc_config, sub_ses_list, Dict_configs_unde
 
   
         
-    if run_lc:    
+    if run_lc:
         futures = client.map(generate_cmd,new_lc_configs,subs,sess,Dir_analysiss,paths_to_analysis_config_json, run_lcs)
         progress(futures)
         results = client.gather(futures)
@@ -285,7 +288,7 @@ def main():
     
     # for DWI pipeline
     if container in ['anatrois', 'rtppreproc', 'rtp-pipeline']:
-        prepare.prepare_dwi_input(parser_namespace, Dir_analysis, lc_config, sub_ses_list)
+        prepare.prepare_dwi_input(parser_namespace, Dir_analysis, lc_config, sub_ses_list, run_lc)
     
     if container == 'fmriprep':
         bidslayout= BIDSLayout(os.path.join(basedir,'BIDS'))

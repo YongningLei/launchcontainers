@@ -91,7 +91,7 @@ def force_symlink(file1, file2, force):
                +"-----------------------------------------------\n")
     return
 #%% check if tractparam ROI was created in the anatrois fs.zip file
-def check_tractparam(lc_config, sub, ses, tractparam_df):
+def check_tractparam(lc_config, sub, ses, tractparam_df, run_lc):
     """
 
         Parameters
@@ -123,17 +123,30 @@ def check_tractparam(lc_config, sub, ses, tractparam_df):
     container = lc_config["general"]["container"]
     precontainer_anat = lc_config["container_specific"][container]["precontainer_anat"]
     anat_analysis_num = lc_config["container_specific"][container]["anat_analysis_num"]
-    
-    fs_zip = os.path.join(
-        basedir,
-        "BIDS",
-        "derivatives",
-        precontainer_anat,
-        "analysis-" + anat_analysis_num,
-        "sub-" + sub,
-        "ses-" + ses,
-        "output", "fs.zip"
-    )
+    if run_lc:
+        rtp_analysis_num = lc_config["general"]["analysis_name"]
+        fs_zip = os.path.join(
+            basedir,
+            "BIDS",
+            "derivatives",
+            container,
+            "analysis-" + rtp_analysis_num,
+            "sub-" + sub,
+            "ses-" + ses,
+            "input",
+            "fs","fs.zip")
+    else:
+        fs_zip = os.path.join(
+            basedir,
+            "BIDS",
+            "derivatives",
+            precontainer_anat,
+            "analysis-" + anat_analysis_num,
+            "sub-" + sub,
+            "ses-" + ses,
+            "output",
+            "fs.zip"
+        )
     # Extract .gz files from zip file and check if they are all present
     with zipfile.ZipFile(fs_zip, 'r') as zip:
         zip_gz_files = set(zip.namelist())
@@ -578,7 +591,7 @@ def rtppreproc(parser_namespace, Dir_analysis, lc_config, sub, ses):
 
 
 #%%
-def rtppipeline(parser_namespace, Dir_analysis,lc_config,sub, ses):
+def rtppipeline(parser_namespace, Dir_analysis,lc_config,sub, ses,run_lc):
     """
     Parameters
     ----------
@@ -688,7 +701,7 @@ def rtppipeline(parser_namespace, Dir_analysis,lc_config,sub, ses):
 
     # the tractparams check, at the analysis folder 
     tractparam_df =read_df(dstFile_tractparams)
-    check_tractparam(lc_config, sub, ses, tractparam_df)
+    check_tractparam(lc_config, sub, ses, tractparam_df,run_lc)
 
 
     # Create the symbolic links

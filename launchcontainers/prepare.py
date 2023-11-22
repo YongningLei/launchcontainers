@@ -210,6 +210,11 @@ def prepare_prf_input ():
 
 
 # by the end of this afternoon, we are able to run prfprepare with the 3 features we have.
+
+# !! pay attention, all those steps should be finised under prepare mode, which means, parser_name_space.run_lc==False,
+
+if that is true, the prepare mode should be off, and nothing should be changed in the analysis-xx folder
+
     """
     
     return

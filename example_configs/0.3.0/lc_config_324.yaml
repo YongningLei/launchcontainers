@@ -17,7 +17,7 @@ general:
   # VALID OPTIONS: freesurferator, rtp2-preproc, rtp2-pipeline, anatrois, rtppreproc, rtp-pipeline, l1_glm, fmriprep 
   container: rtp2-pipeline
   # Name of analysis folder 
-  analysis_name: test_qmap
+  analysis_name: test_rewrite_bval
   # Place the computing will be held. 
   # VALID OPTIONS: local, BCBL, DIPC.
   host: local
@@ -114,17 +114,9 @@ container_specific:
     # If reverse phase encoding is applied in the sequence
     # It checks if there is a reverse phase encoding acquisition
     # if not, launchcontainers will create mock files
-    rpe: False
-    # Use qmap file or not?
-    use_qmap: True
-    # Directory name of your pre-run freesurfer, this directory should be under /basedir/bidsdir/derivatives
-    qmap_dir_name: mrVista_0.1.0
-    # Analysis name of pre-run freesurfer
-    qmap_analysis_name: test_qmap
-    # qunatitative MRI maps, must be nifti format
-    # A super identifier to find the pattern 
-    qmap_fname: '^qmap.*\.zip$'
-
+    rpe: True
+    # Full Path to qunatitative MRI maps, must be nifti format
+    qmap_nifti: /home/tlei/Desktop/FG.nii.gz
 
   rtp2-pipeline:
     # Version identifier for container 
@@ -137,20 +129,13 @@ container_specific:
     precontainer_preproc: rtp2-preproc_0.2.1_3.0.4
     # Analysis name 
     preproc_analysis_name: control_points_02
+    # optional
     # Path to tractparams files, needs to be a .csv
     tractparams: /home/tlei/tlei/LMC_DWI_course/scripts/tractparams_short_course.csv
-    # optional
     # Path to brain.nii.gz of freesurfer If use fsmask or define manually, this option is set in case you need 
-    fsmask: 
-    # Use qmap file or not?
-    use_qmap: True
-    # Directory name of your pre-run freesurfer, this directory should be under /basedir/bidsdir/derivatives
-    qmap_dir_name: mrVista_0.1.0
-    # Analysis name of pre-run freesurfer
-    qmap_analysis_name: test_qmap
-    # qunatitative MRI maps, must be nifti format
-    # A super identifier to find the pattern 
-    qmap_fname: '^qmap.*\.zip$'
+    fsmask: /home/tlei/Desktop/FG.nii.gz
+    # zip file for rtp2-pipeline
+    qmap_zip: /home/tlei/Desktop/annnnooott.zip
 
 host_options:
     BCBL:

@@ -12,7 +12,7 @@ general:
   # Name of bids directory, 1 level under basedir, must contain dataset_description
   bidsdir_name: BIDS
   # Directory contains singularity images
-  containerdir: /home/tlei/tlei/LMC_DWI_course/containers
+  containerdir: /bcbl/home/public/Gari/containers #containers
   # Name of the container
   # VALID OPTIONS: freesurferator, rtp2-preproc, rtp2-pipeline, anatrois, rtppreproc, rtp-pipeline, l1_glm, fmriprep 
   container: rtp2-pipeline
@@ -39,11 +39,11 @@ container_specific:
     # Pre-run freesurfer or not?
     pre_fs: True
     # Directory name of your pre-run freesurfer, this directory should be under /basedir/bidsdir/derivatives
-    prefs_dir_name: anatrois_4.6.1-7.3.2
+    prefs_dir_name: anatrois_4.5.3-7.3.2
     # Analysis name of pre-run freesurfer
-    prefs_analysis_name: "6prefs_from_fmriprep"
+    prefs_analysis_name: control_points_01
     # A super identifier to find the pattern no need to change
-    prefs_zipname: '^anatrois_S.*\.zip$'
+    prefs_zipname: ^anatrois_S.*\.zip$
     # optional
     # Freesurfer annotefiles
     annotfile: 
@@ -79,15 +79,17 @@ container_specific:
 
   freesurferator:
     # Version identifier for container 
-    version: 0.2.0-7.4.1rc19
+    version: 0.2.1_7.4.1
     # Pre-run freesurfer or not?
     pre_fs: True
     # Directory name of your pre-run freesurfer, this directory should be under /basedir/bidsdir/derivatives
-    prefs_dir_name: freesurferator_0.2.0-7.4.1rc19
+    prefs_dir_name: anatrois_4.5.3-7.3.2
     # Analysis name of pre-run freesurfer
-    prefs_analysis_name: control_points_02
+    prefs_analysis_name: control_points_01
     # A super identifier to find the pattern 
-    prefs_zipname: '^freesurferator_S.*\.zip$'
+    # The pattern is using python package re, useually you don't need to change this if you are using simply the 
+    # RTP2-pipeline
+    prefs_zipname: '^freesurferator.*.zip$|^anatrois.*\.zip$'
     # If you want to use the control points created in the previous analysis (control.dat), set this True:
     control_points: False
     # If you created control points, you'll have an unzipped folder in the output analysis. Fill prefs_unzipname
@@ -95,17 +97,17 @@ container_specific:
     prefs_unzipname: 'S.*$'
     # optional 
     # Freesurfer annotefiles
-    annotfile:  /home/tlei/Desktop/annnnooott.zip
+    annotfile:
     # MNI roi zip file
-    mniroizip: /home/tlei/Desktop/FG.nii.gz
+    mniroizip:
 
   rtp2-preproc:
     # Version identifier for container      
-    version: 0.1.0_3.0.4rc31
+    version: 0.2.1_3.0.4
     # anatrois or freesurferator dir, used to find the brainmask
-    precontainer_anat: freesurferator_0.2.0-7.4.1rc19
+    precontainer_anat: freesurferator_0.2.1_7.4.1
     # Analysis name 
-    anat_analysis_name: control_points_02
+    anat_analysis_name: roi_thalamic
     # optional
     # if your encoding direction DWI is multishell sequence and they are in seperate files
     separated_shell_files: False
@@ -126,13 +128,13 @@ container_specific:
 
   rtp2-pipeline:
     # Version identifier for container 
-    version: 0.1.0_3.0.4rc20
+    version: 0.2.1_3.0.4
     # anatrois or freesurferator dir, used to find the brainmask and fs/ROIs
-    precontainer_anat: freesurferator_0.2.0-7.4.1rc19
+    precontainer_anat:  freesurferator_0.2.1_7.4.1
     # Analysis name 
-    anat_analysis_name: control_points_02
+    anat_analysis_name: allroi
     # rtppreproc or rtp2-preproc dir, used to find the dwi.nii.gz, bvec and bval
-    precontainer_preproc: rtp2-preproc_0.1.0_3.0.4rc31
+    precontainer_preproc: rtp2-preproc_0.2.1_3.0.4
     # Analysis name 
     preproc_analysis_name: control_points_02
     # Path to tractparams files, needs to be a .csv
@@ -199,14 +201,14 @@ host_options:
     local:
       # Local machine, ubuntu, MacOS
       # if the local machine use module load this option will give you different version of job-queue cmd
-      use_module: False
+      use_module: True
       apptainer: apptainer/latest
       # Copy the example list: for BCBL we need ['/bcbl', '/tmp', '/export']; for okazaki we need ['/fileserver', '/tmp']
       bind_options: ['/bcbl', '/tmp', '/scratch', '/export']
       manager: 'local'
       # This can only be serial, parallel, or dask_worker any other options will make it fail.
-      launch_mode: 'serial'
+      launch_mode: 'parallel'
       # Arguments below only affect to parallel launch mode
-      njobs: 5
+      njobs: 3
       memory_limit: '32GiB'
       threads_per_worker: 6

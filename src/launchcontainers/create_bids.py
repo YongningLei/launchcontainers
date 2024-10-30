@@ -171,6 +171,11 @@ def main():
                 "sub-" + sub,
                 "ses-" + ses
                 )
+            description_file= op.join(
+                basedir,
+                bidsdir_name,
+                "dataset_description.json")
+            Path(description_file).touch()
             anat_dir=op.join(session_dir,'anat')
             fmri_dir=op.join(session_dir,'fmri')
             dwi_dir=op.join(session_dir,'dwi')

@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "launchcontainers"
-version = "0.3.24"
+version = "0.3.25"
 description = "A Python based soft to launch neuroimaging containers on clusters"
 authors = [ "Garikoitz Lerma-Usabiaga",
             "Leandro Lecca",

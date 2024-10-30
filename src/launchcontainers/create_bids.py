@@ -120,42 +120,75 @@ def main():
     sub_ses_list_path = parser_namespace.sub_ses_list
     sub_ses_list,num_of_true_run = do.read_df(sub_ses_list_path)
     
+
     
-    if log_dir=="analysis_dir":
-        log_dir=op.join(basedir,bidsdir_name,'derivatives',f'{container}_{version}',f"analysis-{analysis_name}")
+    if not container == "nifti":
+        if log_dir=="analysis_dir":
+            log_dir=op.join(basedir,bidsdir_name,'derivatives',f'{container}_{version}',f"analysis-{analysis_name}")
+        setup_logger(True, log_dir, log_filename)
+        for row in sub_ses_list.itertuples(index=True, name="Pandas"):
+            sub = row.sub
+            ses = row.ses
+            RUN = row.RUN
+            
+            session_dir = op.join(
+                basedir,
+                bidsdir_name,
+                "derivatives",
+                f'{container}_{version}',
+                "analysis-" + analysis_name,
+                "sub-" + sub,
+                "ses-" + ses
+                )
+            input_dir=op.join(session_dir,'input')
+            outpt_dir=op.join(session_dir,'output')
+            fake_file=op.join(outpt_dir,file_name)
+            if not op.exists(input_dir):
+                os.makedirs(input_dir)
+            else:
+                logger.info(f"Input folder for sub-{sub}/ses-{ses} is there")
+            if not op.exists(outpt_dir):
+                os.makedirs(outpt_dir)
+            else:
+                logger.info(f"Output folder for sub-{sub}/ses-{ses} is there")
+            if not Path(fake_file).is_file():
+                Path(fake_file).touch()
+            else:
+                logger.info(f"The file for sub-{sub}/ses-{ses}/output is there")      
+    else:
+        if log_dir=="analysis_dir":
+            log_dir=op.join(basedir,bidsdir_name,'nifti_log')
+        setup_logger(True, log_dir, log_filename)
+
+        for row in sub_ses_list.itertuples(index=True, name="Pandas"):
+            sub = row.sub
+            ses = row.ses
+            RUN = row.RUN
+            
+            session_dir = op.join(
+                basedir,
+                bidsdir_name,
+                "sub-" + sub,
+                "ses-" + ses
+                )
+            anat_dir=op.join(session_dir,'anat')
+            fmri_dir=op.join(session_dir,'fmri')
+            dwi_dir=op.join(session_dir,'dwi')
+            
+            if not op.exists(anat_dir):
+                os.makedirs(anat_dir)
+            else:
+                logger.info(f"anat folder for sub-{sub}/ses-{ses} is there")
+            if not op.exists(fmri_dir):
+                os.makedirs(fmri_dir)
+            else:
+                logger.info(f"fmri folder for sub-{sub}/ses-{ses} is there")
+            if not op.exists(dwi_dir):
+                os.makedirs(dwi_dir)
+            else:
+                logger.info(f"dwi folder for sub-{sub}/ses-{ses} is there")            
 
 
-    setup_logger(True, log_dir, log_filename)
-    
-    for row in sub_ses_list.itertuples(index=True, name="Pandas"):
-        sub = row.sub
-        ses = row.ses
-        RUN = row.RUN
-        
-        session_dir = op.join(
-            basedir,
-            bidsdir_name,
-            "derivatives",
-            f'{container}_{version}',
-            "analysis-" + analysis_name,
-            "sub-" + sub,
-            "ses-" + ses
-            )
-        input_dir=op.join(session_dir,'input')
-        outpt_dir=op.join(session_dir,'output')
-        fake_file=op.join(outpt_dir,file_name)
-        if not op.exists(input_dir):
-            os.makedirs(input_dir)
-        else:
-            logger.info(f"Input folder for sub-{sub}/ses-{ses} is there")
-        if not op.exists(outpt_dir):
-            os.makedirs(outpt_dir)
-        else:
-            logger.info(f"Output folder for sub-{sub}/ses-{ses} is there")
-        if not Path(fake_file).is_file():
-            Path(fake_file).touch()
-        else:
-            logger.info(f"The file for sub-{sub}/ses-{ses}/output is there")            
 # #%%
 if __name__ == "__main__":
     main()

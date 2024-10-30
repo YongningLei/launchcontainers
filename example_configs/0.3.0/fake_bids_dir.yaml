@@ -4,7 +4,7 @@ general:
   # Name of bids directory, 1 level under basedir, must contain dataset_description
   bidsdir_name: BIDS
   # Name of the container
-  # VALID OPTIONS: freesurferator, rtp2-preproc, rtp2-pipeline, anatrois, rtppreproc, rtp-pipeline, l1_glm, fmriprep 
+  # VALID OPTIONS: nifti,freesurferator, rtp2-preproc, rtp2-pipeline, anatrois, rtppreproc, rtp-pipeline, l1_glm, fmriprep 
   container: mrVista
   version: 0.1.0
   # Name of analysis folder 
